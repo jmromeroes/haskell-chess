@@ -3,10 +3,21 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    name: astar
+    version: 0.3.0.1
+    git: https://github.com/weissi/astar.git
+    pantry-tree:
+      size: 369
+      sha256: 88cdf40499eb08aaa75b87683eb41f663536ccf24f19b166d92f783d522c1667
+    commit: 0c24aaa85fe3b8bf060ef399d9825ca9eb242721
+  original:
+    git: https://github.com/weissi/astar.git
+    commit: 0c24aaa85fe3b8bf060ef399d9825ca9eb242721
 snapshots:
 - completed:
-    size: 524154
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/20.yaml
-    sha256: 2f5099f69ddb6abfe64400fe1e6a604e8e628f55e6837211cd70a81eb0a8fa4d
-  original: lts-14.20
+    size: 495226
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2018/7/28.yaml
+    sha256: 58e66dc9433088d56304d4ea3ba3bfe7935e11fbfbcb114f1712ffb253bb1755
+  original: nightly-2018-07-28
