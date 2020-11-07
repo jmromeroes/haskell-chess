@@ -14,6 +14,7 @@ module Components
 , Fonts(..)
 , GameMode(..)
 , Tile(..)
+, Color(..)
 , GameMap(..)
 , PlayerOne(..)
 , PlayerOneReady(..)
@@ -22,7 +23,6 @@ module Components
 , Reticule(..)
 , Position(..)
 , CellRef(..)
-, Character(..)
 , Examine(..)
 , Sprite(..)
 , FloatingTex(..)
@@ -95,9 +95,13 @@ instance Semigroup GameState where (<>) = mappend
 instance Monoid GameState where mempty = GameState $ Game Standard
 instance Component GameState where type Storage GameState = Global GameState
 
+-- Helpful data type for defining color of tiles and pieces
+data Color = Black | White deriving (Show, Eq)
+
 -- Global store of the current game map
-data Tile = Black | White deriving (Show, Eq)
-newtype GameBoard = GameBoar%d (Matrix Tile)
+data Tile = Tile Color deriving Show
+
+newtype GameBoard = GameBoard (Matrix Tile)
 instance Component GameBoard where type Storage GameBoard = Global GameBoard
 instance Semigroup GameBoard where (<>) = mappend
 instance Monoid GameBoard where mempty = GameBoard $ fromList 0 0 []
@@ -110,43 +114,24 @@ instance Component PlayerOne where type Storage PlayerOne = Unique PlayerOne
 data PlayerTwo = PlayerTwo deriving Show
 instance Component PlayerTwo where type Storage PlayerTwo = Unique PlayerTwo
 
--- All white pieces components
-data WhiteQueen = WhiteQueen deriving Show
-instance Component WhiteQueen where type Storage WhiteQueen = Unique WhiteQueen
+-- All pieces components
+data Queen = Queen Color deriving Show
+instance Component Queen where type Storage Queen = Unique Queen Color
 
-data WhiteKing = WhiteKing deriving Show
-instance Component WhiteKing where type Storage WhiteKing = Unique WhiteKing
+data King = King Color deriving Show
+instance Component King where type Storage King = Unique King Color
 
-data WhiteRook = WhiteRook deriving Show
-instance Component WhiteRook where type Storage WhiteRook = Map WhiteRook
+data Rook = Rook Color deriving Show
+instance Component Rook where type Storage Rook = Unique Rook Color
 
-data WhiteBishop = WhiteBishop deriving Show
-instance Component WhiteBishop where type Storage WhiteBishop = Map WhiteBishop
+data Bishop = Bishop Color deriving Show
+instance Component Bishop where type Storage Bishop = Unique Bishop Color
 
-data WhiteKnight = WhiteKnight deriving Show
-instance Component WhiteKnight where type Storage WhiteKnight = Map WhiteKnight
+data Knight = Knight Color deriving Show
+instance Component Knight where type Storage Knight = Unique Knight Color
 
-data WhitePawn = WhitePawn deriving Show
-instance Component WhitePawn where type Storage WhitePawn = Map WhitePawn
-
--- All black pieces compoenents
-data BlackQueen = BlackQueen deriving Show
-instance Component BlackQueen where type Storage BlackQueen = Unique BlackQueen
-
-data BlackKing = BlackKing deriving Show
-instance Component BlackKing where type Storage BlackKing = Unique BlackKing
-
-data BlackRook = BlackRook deriving Show
-instance Component BlackRook where type Storage BlackRook = Map BlackRook
-
-data BlackBishop = BlackBishop deriving Show
-instance Component BlackBishop where type Storage BlackBishop = Map BlackBishop
-
-data BlackKnight = BlackKnight deriving Show
-instance Component BlackKnight where type Storage BlackKnight = Map BlackKnight
-
-data BlackPawn = BlackPawn deriving Show
-instance Component BlackPawn where type Storage BlackPawn = Map BlackPawn
+data Pawn = Pawn Color deriving Show
+instance Component Pawn where type Storage Pawn = Unique Pawn Color
 
 -- Position of game entities
 newtype Position = Position (V2 Double) deriving Show

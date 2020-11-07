@@ -36,21 +36,65 @@ initialise conf r t f = void $ do
   set global $ Fonts $ createResourceMap f
   set global $ GameMap $ generateIdentityMap (V2 40 32)
   void $ newEntity
-    ( Player
-    , Position playerPos
+    ( Queen White
+    , Position (V2 10 10)
+    , CellRef 1 2
+    , Sprite "Assets/WQueen.png" (SDL.Rectangle (P (V2 0 0)) (V2 764 696)))
+  void $ newEntity
+    ( King White
+    , Position (V2 10 10)
+    , CellRef 1 1
+    , Sprite "Assets/WKing.png" (SDL.Rectangle (P (V2 0 0)) (V2 771 777)))
+  void $ newEntity
+    ( Rook White
+    , Position (V2 10 10)
+    , CellRef 1 3
+    , Sprite "Assets/WRook.png" (SDL.Rectangle (P (V2 0 0)) (V2 476 585)))
+  void $ newEntity
+    ( Bishop White 
+    , Position (V2 10 10)
     , CellRef playerCellRef
-    , Sprite "Assets/sprites.png" (SDL.Rectangle (P (V2 16 16)) (V2 16 16)))
+    , Sprite "Assets/WBishop.png" (SDL.Rectangle (P (V2 0 0)) (V2 721 728)))
   void $ newEntity
-    ( Position (V2 0 0)
-    , CellRef (V2 8 10)
-    , Character $ CharacterInfo "Chum" 200 0 0 initialStats initialCombatStats "Edgelords" Defensive Nothing
-    , Sprite "Assets/sprites.png" (SDL.Rectangle (P (V2 112 64)) (V2 16 16)))
+    ( Knight White
+    , Position (V2 10 10)
+    , CellRef playerCellRef
+    , Sprite "Assets/WKnight.png" (SDL.Rectangle (P (V2 0 0)) (V2 620 695)))
   void $ newEntity
-    ( Position (V2 0 0)
-    , CellRef (V2 8 15)
-    , Character $ CharacterInfo "Tum" 200 0 0 initialStats initialCombatStats "Edgelords" Aggressive Nothing
-    , Sprite "Assets/sprites.png" (SDL.Rectangle (P (V2 112 16)) (V2 16 16)))
-  readyPlayer
+    ( Pawn White
+    , Position (V2 10 10)
+    , CellRef playerCellRef
+    , Sprite "Assets/WPawn.png" (SDL.Rectangle (P (V2 0 0)) (V2 476 585)))
+  void $ newEntity
+    ( Queen Black
+    , Position (V2 10 10)
+    , CellRef 1 2
+    , Sprite "Assets/BQueen.png" (SDL.Rectangle (P (V2 0 0)) (V2 764 696)))
+  void $ newEntity
+    ( King Black
+    , Position (V2 10 10)
+    , CellRef 1 1
+    , Sprite "Assets/BKing.png" (SDL.Rectangle (P (V2 0 0)) (V2 771 777)))
+  void $ newEntity
+    ( Rook Black
+    , Position (V2 10 10)
+    , CellRef 1 3
+    , Sprite "Assets/BRook.png" (SDL.Rectangle (P (V2 0 0)) (V2 476 585)))
+  void $ newEntity
+    ( Bishop Black 
+    , Position (V2 10 10)
+    , CellRef playerCellRef
+    , Sprite "Assets/BBishop.png" (SDL.Rectangle (P (V2 0 0)) (V2 721 728)))
+  void $ newEntity
+    ( Knight Black
+    , Position (V2 10 10)
+    , CellRef playerCellRef
+    , Sprite "Assets/BKnight.png" (SDL.Rectangle (P (V2 0 0)) (V2 620 695)))
+  void $ newEntity
+    ( Pawn Black
+    , Position (V2 10 10)
+    , CellRef playerCellRef
+    , Sprite "Assets/BPawn.png" (SDL.Rectangle (P (V2 0 0)) (V2 476 585)))
 
 -- When called, manipulates the global time component
 incrTime :: Double -> System' ()
@@ -101,15 +145,13 @@ main = do
           }
 
   -- Load resources and initialise game
-  texs <- loadTextures renderer ["Assets/sprites.png"]
+  texs <- loadTextures renderer ["Assets/BBishop.png", "Assets/BKing.png", "Assets/BKinght.png", "Assets/BPawn.png", "Assets/BQueen.png", "Assets/BRook.png", "Assets/WBishop.png", "Assets/WKing.png", "Assets/WKinght.png", "Assets/WPawn.png", "Assets/WQueen.png", "Assets/WRook.png"]
   fonts <- loadFonts [("Assets/Roboto-Regular.ttf", 12)]
   runSystem (initialise windowConfig renderer texs fonts) world
 
   -- Set up logical world size
-  let ws = let V2 tsw tsh = tileSize in V2 (40 * tsw) (32 * tsh)
-      additional = let V2 wsw wsh = ws in fromIntegral (round (wsh / 9)) * 16 - wsw
-      worldsize = round <$> (ws + V2 additional 0)
-  SDL.rendererLogicalSize renderer $= Just (fromIntegral <$> worldsize)
+  let ws = let V2 tsw tsh = tileSize in V2 (8 * tsw) (8 * tsh)
+  SDL.rendererLogicalSize renderer $= Just (fromIntegral <$> ws)
 
   -- Display the game
   SDL.showWindow window

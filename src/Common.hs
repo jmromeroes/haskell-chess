@@ -47,14 +47,18 @@ import Components
 -- Uses templateHaskell to create the data 'World'
 -- also creates initWorld
 makeWorld "World" [''Time, ''WindowSize, ''Messages, ''GameState, ''Textures, ''Renderer,''Fonts
-                  , ''GameMap , ''Player, ''PlayerReady, ''PlayerPath, ''Relationships, ''Reticule
-                  , ''Position , ''CellRef, ''Sprite , ''Character , ''Examine, ''FloatingTex] 
+                  , ''GameBoard , ''PlayerOne, ''PlayerTwo, ''PlayerOneReady, ''PlayerTwoReady
+                  , ''Position,''Tile, ''CellRef, ''Sprite  , ''Examine, ''FloatingTex, ''Queen White
+                  , ''King White, ''Rook White, ''Bishop White, ''Knight White, ''Pawn White
+                  , ''Queen Black, ''King Black, ''Rook Black, ''Bishop Black, ''Knight Black
+                  , ''Pawn Black
+                  ]
 
 -- Easy type synonym for systems
 type System' a = System World a
 
 -- Easy way of getting all non-player entities
-type CharacterList = [(Character, CellRef, Entity)]
+type PiecesList = [(King White, Queen White, Rook White, Bishop White, Knight White, Pawn White, King White, Queen Black, Rook Black, Bishop Black, Knight Black, Pawn Black, CellRef)]
 
 -- Post a new message
 postMessage :: [MBit] -> System' ()
@@ -66,11 +70,11 @@ postMessage m = do
 clearMessages :: System' ()
 clearMessages = modify global (\(Messages msgs) -> Messages $ take 45 msgs)
 
--- Converts cell references to game position
+-- Converts cell references to game position"{´0
 snapEntities :: System' ()
 snapEntities = cmap (\(Position (V2 _ _), CellRef p) ->
   Position $ fromIntegral <$> p * tileSize)
-
+  
 -- Spawn a floating tooltip
 spawnFloatingText :: String -> SDL.Font.Color -> V2 Double -> System' ()
 spawnFloatingText s c (V2 x y) = do
@@ -98,16 +102,6 @@ floatTooltips dt =
          SDL.destroyTexture tex
          pure Nothing
   )
-
--- Get the popup colour based on health left
-getHealthColour :: Int -> Int -> SDL.Font.Color
-getHealthColour h maxH 
-  | percent > 0.75 = V4 255 255 255 255
-  | percent > 0.5 = V4 255 255 0 255
-  | percent > 0.25 = V4 255 165 0 255
-  | otherwise = V4 255 0 0 255
-  where percent = fromIntegral h / fromIntegral maxH
-
 
 -- Examine whatever is on the tile at position
 examinePos :: V2 Int -> System' ()
@@ -195,12 +189,6 @@ vectToDirection (V2 (-1) 1) = Just DownLeft
 vectToDirection (V2 (-1) 0) = Just T.Left
 vectToDirection (V2 (-1) (-1)) = Just UpLeft
 vectToDirection _ = Nothing
-
-playerPos :: V2 Double
-playerPos = V2 0 0
-
-playerCellRef :: V2 Int
-playerCellRef = V2 0 0
 
 tileSize :: Num a => V2 a
 tileSize = V2 16 16
